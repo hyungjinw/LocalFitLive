@@ -27,6 +27,8 @@ export const evaluations = pgTable("evaluations", {
 export const insertEvaluationSchema = createInsertSchema(evaluations).pick({
   isUseful: true,
   requirements: true,
+}).extend({
+  requirements: z.string().nullable().optional(),
 });
 
 export type InsertEvaluation = z.infer<typeof insertEvaluationSchema>;

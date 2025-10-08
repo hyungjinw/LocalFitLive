@@ -48,13 +48,11 @@ export function ServiceEvaluationForm() {
         throw new Error('Failed to submit');
       }
     } catch (error) {
-      console.log('Submit evaluation:', { isUseful, requirements });
       toast({
-        title: "평가가 제출되었습니다",
-        description: "소중한 의견 감사합니다!",
+        title: "제출 실패",
+        description: "다시 시도해주세요.",
+        variant: "destructive",
       });
-      setIsUseful(null);
-      setRequirements("");
     } finally {
       setIsSubmitting(false);
     }

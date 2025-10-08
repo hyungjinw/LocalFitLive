@@ -42,21 +42,11 @@ export default function AdminLogin() {
         });
       }
     } catch (error) {
-      if (username === "admin" && password === "123456") {
-        console.log('Admin login successful (mock)');
-        toast({
-          title: "로그인 성공",
-          description: "관리자 대시보드로 이동합니다.",
-        });
-        localStorage.setItem('adminAuth', 'true');
-        setLocation("/admin/dashboard");
-      } else {
-        toast({
-          title: "로그인 실패",
-          description: "아이디 또는 비밀번호를 확인해주세요.",
-          variant: "destructive",
-        });
-      }
+      toast({
+        title: "로그인 실패",
+        description: "서버 연결에 실패했습니다.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }

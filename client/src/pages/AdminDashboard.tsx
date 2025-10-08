@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { Header } from "@/components/Header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ThumbsUp, ThumbsDown, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
 
 interface Evaluation {
   id: string;
@@ -15,46 +16,25 @@ interface Evaluation {
 
 export default function AdminDashboard() {
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
 
-  useEffect(() => {
-    const isAuth = localStorage.getItem('adminAuth');
-    if (!isAuth) {
-      setLocation('/admin');
-    }
-  }, [setLocation]);
-
-  const { data: evaluations = [], isLoading } = useQuery<Evaluation[]>({
+  const { data: evaluations = [], isLoading, error } = useQuery<Evaluation[]>({
     queryKey: ['/api/evaluations'],
+    retry: false,
   });
 
-  const mockEvaluations: Evaluation[] = [
-    {
-      id: "1",
-      isUseful: true,
-      requirements: "다양한 국가의 옷차림 정보가 있어서 좋았습니다. 더 많은 도시가 추가되면 좋겠어요.",
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "2",
-      isUseful: false,
-      requirements: "사진이 좀 더 많았으면 좋겠습니다. 시간대별 옷차림도 궁금해요.",
-      createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "3",
-      isUseful: true,
-      requirements: null,
-      createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-    {
-      id: "4",
-      isUseful: true,
-      requirements: "기온 정보가 함께 있어서 참고하기 좋았습니다. 앱으로도 나왔으면 합니다!",
-      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  ];
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: "인증 오류",
+        description: "관리자 로그인이 필요합니다.",
+        variant: "destructive",
+      });
+      setLocation('/admin');
+    }
+  }, [error, setLocation, toast]);
 
-  const displayData = evaluations.length > 0 ? evaluations : mockEvaluations;
+  const displayData = evaluations;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
